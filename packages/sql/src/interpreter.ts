@@ -52,7 +52,7 @@ export class Query {
       return this._rootAlias + this._localField(name);
     }
 
-    const relationNameIndex = name.indexOf('.');
+    const relationNameIndex = name.lastIndexOf('.');
 
     if (relationNameIndex === -1) {
       return this._rootAlias + this._localField(name);
@@ -65,8 +65,11 @@ export class Query {
       return this._rootAlias + this._localField(name);
     }
 
-    this._joins.add(relationName);
-    return this._foreignField(field, relationName);
+    const relationLastAlias = relationName.split('.').slice(-1)[0];
+
+    relationName.split('.').forEach(r => this._joins.add(r));
+
+    return this._foreignField(field, relationLastAlias);
   }
 
   private _localField(field: string) {

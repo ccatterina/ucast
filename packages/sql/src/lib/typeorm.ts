@@ -7,22 +7,26 @@ import {
   createDialects
 } from '../index';
 
-function joinRelation<Entity>(relationName: string, query: SelectQueryBuilder<Entity>) {
-  const meta = query.expressionMap.mainAlias!.metadata;
-  const joinAlreadyExists = query.expressionMap.joinAttributes
-    .some(j => j.alias.name === relationName);
+function joinRelation<Entity>(relation: string, query: SelectQueryBuilder<Entity>) {
+  const relationParts = relation.split('.');
+  let meta = query.expressionMap.mainAlias?.metadata;
 
-  if (joinAlreadyExists) {
-    return true;
+  // eslint-disable-next-line no-restricted-syntax
+  for (const part of relationParts) {
+    const relationData = meta?.findRelationWithPropertyPath(part);
+    if (!relationData) {
+      return false;
+    }
+    meta = relationData.inverseRelation?.entityMetadata;
   }
 
-  const relation = meta.findRelationWithPropertyPath(relationName);
-  if (relation) {
-    query.innerJoin(`${query.alias}.${relationName}`, relationName);
-    return true;
-  }
-
-  return false;
+  relationParts.forEach((part, i) => {
+    const alias = (i > 0) ? relationParts[i - 1] : query.expressionMap.mainAlias?.name;
+    if (!query.expressionMap.joinAttributes.some(j => j.alias.name === part)) {
+      query.innerJoin(`${alias}.${part}`, part);
+    }
+  });
+  return true;
 }
 
 const dialects = createDialects({
