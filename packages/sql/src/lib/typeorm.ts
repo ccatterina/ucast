@@ -32,7 +32,8 @@ function joinRelation<Entity>(relation: string, query: SelectQueryBuilder<Entity
 
 const dialects = createDialects({
   joinRelation,
-  paramPlaceholder: index => `:${index - 1}`
+  paramPlaceholder: index => `:${index - 1}`,
+  escapeField: (field: string) => field,
 });
 
 // eslint-disable-next-line no-multi-assign
