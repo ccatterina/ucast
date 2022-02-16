@@ -94,8 +94,8 @@ describe('Condition interpreter for TypeORM', () => {
       'SELECT "u"."id" AS "u_id", "u"."name" AS "u_name"',
       'FROM "user" "u"',
       'LEFT JOIN "project" "projects" ON "projects"."userId"="u"."id"',
-      ' LEFT JOIN "review" "reviews" ON "reviews"."projectId"="projects"."id"',
-      'WHERE ("reviews"."rating" = :0 and "projects"."active" = :1)'
+      ' LEFT JOIN "review" "projects_reviews" ON "projects_reviews"."projectId"="projects"."id"',
+      'WHERE ("projects_reviews"."rating" = :0 and "projects"."active" = :1)'
     ].join(' '))
     expect(query.getParameters()).to.eql({ 0: 5, 1: true })
   })

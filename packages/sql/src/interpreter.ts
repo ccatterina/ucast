@@ -65,11 +65,9 @@ export class Query {
       return this._rootAlias + this._localField(name);
     }
 
-    const relationLastAlias = relationName.split('.').slice(-1)[0];
-
     relationName.split('.').forEach(r => this._joins.add(r));
 
-    return this._foreignField(field, relationLastAlias);
+    return this._foreignField(field, relationName);
   }
 
   private _localField(field: string) {
@@ -77,7 +75,8 @@ export class Query {
   }
 
   private _foreignField(field: string, relationName: string) {
-    return `${this.options.escapeField(relationName)}.${this.options.escapeField(field)}`;
+    const relationLastAlias = relationName.split('.').slice(-1)[0];
+    return `${this.options.escapeField(relationLastAlias)}.${this.options.escapeField(field)}`;
   }
 
   param(value: unknown) {
