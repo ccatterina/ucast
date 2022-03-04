@@ -32,7 +32,7 @@ function joinRelation<Entity>(relation: string, query: SelectQueryBuilder<Entity
 }
 
 function foreignField<Entity>(field: string, relationName: string) {
-  return `${relationName.replaceAll('.', '_')}.${field}`;
+  return `${relationName.replace(/\./g, '_')}.${field}`;
 }
 
 const dialects = createDialects({
